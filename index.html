@@ -26,7 +26,18 @@
       <a href="#about">עליי</a>
       <a class="nav-cta" href="#contact">בואו נדבר</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- ===================== MOBILE MENU ===================== -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#work">תיק עבודות</a>
+    <a href="#services">מה אני עושה</a>
+    <a href="#about">עליי</a>
+    <a href="#contact" class="mm-cta">בואו נדבר</a>
+  </div>
 
   <!-- ===================== HERO ===================== -->
   <header id="top" class="hero">
@@ -293,7 +304,7 @@
             <label for="phone">טלפון</label>
             <input id="phone" name="phone" type="tel" placeholder="050-0000000" required>
           </div>
-          <div class="field">
+          <div class="field select-wrap">
             <label for="type">סוג הפרויקט</label>
             <select id="type" name="type">
               <option>שיר מלא (הפקה)</option>
@@ -390,7 +401,37 @@
     padding:8px 16px;border-radius:999px;
   }
   .nav-cta:hover{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,154,61,.12);}
-  @media(max-width:620px){.nav-links a:not(.nav-cta){display:none;}}
+
+  /* hamburger */
+  .nav-toggle{
+    display:none;width:44px;height:44px;border:1px solid var(--line-strong);border-radius:12px;
+    background:rgba(255,255,255,.03);cursor:pointer;padding:0;
+    flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  }
+  .nav-toggle span{display:block;width:20px;height:2px;border-radius:2px;background:var(--text);transition:transform .3s ease,opacity .25s ease;}
+  .nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0;}
+  .nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  /* mobile menu panel */
+  .mobile-menu{
+    position:fixed;z-index:45;inset:0 0 auto 0;top:0;padding:88px var(--pad) 26px;
+    display:flex;flex-direction:column;gap:4px;
+    background:rgba(12,10,17,.94);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);
+    border-bottom:1px solid var(--line);
+    transform:translateY(-102%);transition:transform .42s cubic-bezier(.16,.84,.28,1);
+    visibility:hidden;
+  }
+  .mobile-menu.open{transform:translateY(0);visibility:visible;}
+  .mobile-menu a{padding:16px 4px;font-size:1.25rem;font-weight:700;color:var(--text);border-bottom:1px solid var(--line);}
+  .mobile-menu a:last-child{border-bottom:none;}
+  .mobile-menu .mm-cta{margin-top:14px;text-align:center;border:none;background:var(--grad);color:#1a0f14;border-radius:999px;padding:15px;}
+  body.menu-open{overflow:hidden;}
+
+  @media(max-width:720px){
+    .nav-links{display:none;}
+    .nav-toggle{display:flex;}
+  }
 
   /* ===================== HERO ===================== */
   .hero{position:relative;min-height:100svh;display:flex;align-items:center;padding:0 var(--pad);isolation:isolate;overflow:hidden;}
@@ -576,7 +617,12 @@
   .field input:focus,.field select:focus,.field textarea:focus{
     outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,154,61,.15);
   }
-  .field select{appearance:none;cursor:pointer;}
+  .field.select-wrap{position:relative;}
+  .field select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-left:40px;}
+  .field.select-wrap::after{
+    content:"";position:absolute;left:16px;bottom:19px;width:9px;height:9px;pointer-events:none;
+    border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);
+  }
   .form-note{color:#41d68a;font-weight:700;text-align:center;margin-top:4px;}
 
   /* ===================== FOOTER ===================== */
@@ -588,6 +634,27 @@
   /* ===================== FOCUS ===================== */
   #page a:focus-visible,#page button:focus-visible,#page input:focus-visible,
   #page select:focus-visible,#page textarea:focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
+
+  /* ===================== MOBILE TUNING ===================== */
+  @media(max-width:600px){
+    .hero-inner{padding:104px 0 72px;}
+    .hero-title{font-size:clamp(2.4rem,12vw,3.4rem);letter-spacing:-.03em;}
+    .hero-sub{margin-top:22px;}
+    .hero-actions{margin-top:30px;gap:12px;width:100%;}
+    .hero-actions .btn{flex:1 1 100%;}
+    .eyebrow{margin-bottom:22px;}
+    .section-head{margin-bottom:40px;}
+    .track{padding:18px;}
+    .track-info h3{font-size:1.25rem;}
+    .about-list{gap:8px;}
+    .contact-form{border-radius:20px;}
+    .marquee-track{font-size:1.05rem;gap:18px;}
+    .foot-brand{font-size:1.3rem;}
+  }
+  @media(max-width:380px){
+    .hero-title{font-size:clamp(2.05rem,11.5vw,2.6rem);}
+    .stat b{font-size:2rem;}
+  }
 
   /* ===================== REDUCED MOTION ===================== */
   @media(prefers-reduced-motion:reduce){
@@ -604,6 +671,22 @@
   var nav=document.getElementById('nav');
   function onScroll(){ nav.classList.toggle('scrolled',window.scrollY>30); }
   onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
+
+  /* ---- mobile menu ---- */
+  var toggle=document.getElementById('navToggle');
+  var menu=document.getElementById('mobileMenu');
+  function setMenu(open){
+    menu.classList.toggle('open',open);
+    toggle.setAttribute('aria-expanded',open?'true':'false');
+    menu.setAttribute('aria-hidden',open?'false':'true');
+    document.body.classList.toggle('menu-open',open);
+    toggle.setAttribute('aria-label',open?'סגירת תפריט':'פתיחת תפריט');
+  }
+  if(toggle&&menu){
+    toggle.addEventListener('click',function(){ setMenu(!menu.classList.contains('open')); });
+    menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ setMenu(false); }); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') setMenu(false); });
+  }
 
   /* ---- reveal on scroll ---- */
   var io=new IntersectionObserver(function(entries){
